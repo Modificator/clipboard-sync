@@ -1,8 +1,127 @@
 # Clipboard Sync
 
-Bidirectional clipboard synchronization between Linux (Wayland) and macOS.
+Clipboard synchronization for Linux (Wayland) and macOS.
 
-## Features
+This repository now ships two modes:
+
+- **Relay mode (recommended):** Go client/server architecture for multi-device sync without SSH.
+- **Legacy SSH mode:** Existing Linux ↔ macOS shell script flow kept for backward compatibility.
+
+## Relay Mode
+
+Relay mode replaces direct SSH clipboard access with:
+
+- a **Go relay server** that accepts multiple devices
+- a **Go client** that runs on each device
+- shared metadata (`device_id`, `room`, `hash`, `timestamp`, `kind`) to prevent loops and stale updates
+
+### Features
+
+- Multi-device fan-out through one relay service
+- Room isolation and shared-token authentication
+- Optional TLS on the relay socket
+- Linux and macOS client support
+- Text and image clipboard sync
+
+### Relay architecture
+
+```text
+Device A client ─┐
+Device B client ─┼──> Go relay server ─── broadcast to other devices in same room
+Device C client ─┘
+```
+
+### Build
+
+```bash
+go build ./cmd/clipboard-sync-server
+go build ./cmd/clipboard-sync-client
+```
+
+### Run the relay server
+
+Plain TCP:
+
+```bash
+./clipboard-sync-server -listen :8484 -token your-shared-token
+```
+
+TLS:
+
+```bash
+./clipboard-sync-server \
+  -listen :8484 \
+  -token your-shared-token \
+  -tls-cert /path/to/fullchain.pem \
+  -tls-key /path/to/privkey.pem
+```
+
+### Client configuration
+
+Copy `config/client.ini.template` to `~/.config/clipboard-sync/client.ini` and edit it.
+
+```ini
+[server]
+address = relay.example.com:8484
+token = REPLACE_WITH_SHARED_TOKEN
+room = personal
+
+[device]
+id = linux-laptop
+name = Linux Laptop
+
+[sync]
+poll_interval = 1
+enable_text = true
+enable_image = true
+
+[clipboard]
+image_helper_path = /Users/YOUR_USERNAME/scripts/imagecopy
+
+[tls]
+enabled = true
+cert_file =
+skip_verify = false
+```
+
+### Run a client
+
+Linux:
+
+```bash
+./clipboard-sync-client -config ~/.config/clipboard-sync/client.ini
+```
+
+macOS:
+
+```bash
+./clipboard-sync-client -config ~/.config/clipboard-sync/client.ini
+```
+
+#### Client requirements
+
+Linux:
+- Wayland compositor
+- `wl-paste`
+- `wl-copy`
+
+macOS:
+- `pbcopy`
+- `pbpaste`
+- `imagecopy` helper for image sync
+
+### Security notes
+
+- Use TLS in any non-local deployment.
+- Use a strong shared token.
+- Use separate `room` values for different users or device groups.
+- Prefer a private CA bundle or publicly trusted certificate instead of `skip_verify = true`.
+
+## Legacy SSH Mode
+
+The original Linux → SSH → macOS flow is still available.
+
+### Features
 
 - **Text sync**: Copy text on Linux → available on macOS, and vice versa
 - **Image sync**: Copy images on Linux → available on macOS, and vice versa

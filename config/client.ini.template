@@ -1,0 +1,27 @@
+# Clipboard Sync relay client configuration
+
+[server]
+# Use localhost:8484 for local testing, or your relay host:port for remote sync.
+address = relay.example.com:8484
+token = REPLACE_WITH_SHARED_TOKEN
+room = personal
+
+[device]
+id = linux-laptop
+name = Linux Laptop
+
+[sync]
+poll_interval = 1
+enable_text = true
+enable_image = true
+
+[clipboard]
+# Required on macOS, ignored on Linux.
+image_helper_path = /Users/YOUR_USERNAME/scripts/imagecopy
+
+[tls]
+enabled = true
+# Optional CA bundle for self-signed/private certificates.
+cert_file =
+# For local testing only.
+skip_verify = false
