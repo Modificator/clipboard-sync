@@ -238,7 +238,6 @@ func (r *roomState) broadcast(source *clientConn, update protocol.ClipboardUpdat
 	}
 	r.seq++
 	update.ServerSeq = r.seq
-	update.Timestamp = update.Timestamp.UTC()
 	r.latest[update.Kind] = update
 	clients := make([]*clientConn, 0, len(r.clients))
 	for _, client := range r.clients {

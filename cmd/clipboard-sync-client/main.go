@@ -298,6 +298,9 @@ func dialServer(cfg config.ClientConfig) (net.Conn, error) {
 	if !cfg.TLSEnabled {
 		return net.Dial("tcp", cfg.ServerAddress)
 	}
+	if cfg.TLSSkipVerify {
+		log.Printf("warning: connecting with tls.skip_verify=true to %s", cfg.ServerAddress)
+	}
 	tlsConfig := &tls.Config{MinVersion: tls.VersionTLS12, InsecureSkipVerify: cfg.TLSSkipVerify}
 	if cfg.TLSCertFile != "" {
 		pem, err := os.ReadFile(cfg.TLSCertFile)

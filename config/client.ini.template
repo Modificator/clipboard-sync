@@ -1,6 +1,7 @@
 # Clipboard Sync relay client configuration
 
 [server]
+# Use localhost:8484 for local testing, or your relay host:port for remote sync.
 address = relay.example.com:8484
 token = REPLACE_WITH_SHARED_TOKEN
 room = personal
