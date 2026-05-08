@@ -16,6 +16,9 @@ func main() {
 	tlsCert := flag.String("tls-cert", "", "TLS certificate file")
 	tlsKey := flag.String("tls-key", "", "TLS key file")
 	flag.Parse()
+	if *token == "" {
+		log.Fatal("relay token is required")
+	}
 
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()

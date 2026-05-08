@@ -46,6 +46,9 @@ func main() {
 	if cfg.DeviceName == "" {
 		cfg.DeviceName = cfg.DeviceID
 	}
+	if cfg.TLSEnabled && cfg.TLSSkipVerify {
+		log.Printf("warning: tls.skip_verify=true disables certificate validation and should only be used for local testing")
+	}
 
 	backend, err := clipboard.NewBackend(cfg.ImageHelperPath)
 	if err != nil {

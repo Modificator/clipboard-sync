@@ -163,11 +163,8 @@ func (s *Server) validateHello(hello protocol.Hello) error {
 	if hello.Room == "" {
 		return fmt.Errorf("room is required")
 	}
-	if s.requireToken != "" && hello.Token != s.requireToken {
+	if hello.Token != s.requireToken {
 		return fmt.Errorf("authentication failed")
-	}
-	if s.requireToken == "" && hello.Token == "" {
-		return fmt.Errorf("token is required")
 	}
 	return nil
 }
