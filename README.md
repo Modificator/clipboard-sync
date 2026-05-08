@@ -58,7 +58,7 @@ TLS:
 
 ### Client configuration
 
-Copy `/home/runner/work/clipboard-sync/clipboard-sync/config/client.ini.template` to `~/.config/clipboard-sync/client.ini` and edit it.
+Copy `config/client.ini.template` to `~/.config/clipboard-sync/client.ini` and edit it.
 
 ```ini
 [server]
